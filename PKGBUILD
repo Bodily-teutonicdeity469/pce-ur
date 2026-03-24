@@ -31,7 +31,20 @@
 #     <alexander@redhat.com>
 
 if [[ ! -v "_git" ]]; then
-  _git="true"
+  _git="false"
+fi
+if [[ ! -v "_git_service" ]]; then
+  if [[ "${_git}" == "true" ]]; then
+    _git_service="hampa"
+  elif [[ "${_git}" == "false" ]]; then
+    _git_service="github"
+  fi
+fi
+if [[ ! -v "_ns" ]]; then
+  _ns="themartiancompany"
+fi
+if [[ ! -v "_archive_format" ]]; then
+  _archive_format="zip"
 fi
 _pkg="pce"
 pkgbase="${_pkg}"
@@ -39,7 +52,7 @@ pkgname=(
   "${_pkg}"
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
-pkgver="${_pkg}.0.2.2.745.g9353360d"
+pkgver="ur.0.2.2.745.g70b5e3f7"
 pkgrel=1
 _pkgdesc=(
   "PCE is a collection of"
@@ -78,8 +91,25 @@ if [[ "${_git}" == "true" ]]; then
     "git"
   )
 fi
+_tag_name="commit"
+_tag="${_commit}"
+_tarname="${_pkg}-${_commit}"
+_tarfile="${_tarname}.${_archive_format}"
+_url="https://${_git_service}.com/${_ns}/${_pkg}"
+_github_sum="852b200e7097ab529017ac7b53863b495e1fb78dd787170a6f9ad7eb23b79a80"
+_github_sig_sum="e647f7599ae3d42545146b95e02ab264c0336c8a5b8aede5bfd3d0144a7ad521"
+_github_512_sum="5474eb591d96ec51999614f75b5134d7a25ffb0389a38e6e88beeb83a62d6f2dec7b88f71bdab681119c044b4c727e0924a356e1bf30a44c84c6981e2bf7fe0d"
+if [[ "${_git_service}" == "hampa" ]]; then
+  _uri="git://git.hampa.ch/${_pkg}.git"
+  _src="${_tarname}::${_uri}#${_tag_name}=${_tag}"
+elif [[ "${_git_service}" == "github" ]]; then
+  if [[ "${_tag_name}" == "commit" ]]; then
+   _sum="${_github_512_sum}"
+   _src="${_tarfile}::${_url}/archive/${_commit}.${_archive_format}"
+  fi
+fi
 source=(
-  'git://git.hampa.ch/pce.git'
+  "${_src}"
   "${url}/rom/atarist/tos-1.00-uk.rom"
   "${url}/rom/atarist/tos-1.00-us.rom"
   "${url}/rom/atarist/tos-1.02-uk.rom"
@@ -120,7 +150,7 @@ source=(
   "${url}/rom/rc759/rc759-2-4.0.rom"
   "${url}/rom/rc759/rc759-2-5.1.rom"
   'pce-ibmpc.patch'
-  )
+)
 sha512sums=(
   'SKIP'
   '64a90a40473ef340c429a76f12b23c4d7cceee808abc23d8cd54a977afdef7ae8a96918462450aed9b8dce578a4690982dd21fe39ac69e60c780bd90fbff11ac'
@@ -165,22 +195,24 @@ sha512sums=(
   '30a041dd73c85de6c4169dd92bdfbfe680326749907757a13eb567135087ddee99fdaae1b86fcffcc89e2e91fd3de08076d537b25dc7fc03a872dadadcdef76d'
 )
 
-pkgver() {
-  # ln \
-  #   -sf \
-  #   "BambuStudio" \
-  #   "BambuStudio"
-  cd \
-    "${_pkg}"
-  printf \
-    "%s" \
-    "$(git \
-         describe \
-	   --long \
-	   --tags |
-	 sed \
-	   's/v//; s/-/./g')"
-}
+# pkgver() {
+#   # ln \
+#   #   -sf \
+#   #   "BambuStudio" \
+#   #   "BambuStudio"
+#   cd \
+#     "${_tarname}"
+#   if [[ "${_git}" == "true" ]]; then
+#     printf \
+#       "%s" \
+#       "$(git \
+#            describe \
+#              --long \
+#              --tags |
+#            sed \
+#              's/v//; s/-/./g')"
+#   fi
+# }
 
 build() {
   local \
@@ -192,7 +224,7 @@ build() {
     --enable-macplus-rom
   )
   cd \
-    "${srcdir}/${_pkg}"
+    "${srcdir}/${_tarname}"
   ./configure \
     "${_configure_opts[@]}"
   { test \
@@ -206,7 +238,7 @@ build() {
 
 package() {
   cd \
-    "${srcdir}/${_pkg}"
+    "${srcdir}/${_tarname}"
   make \
     DESTDIR="${pkgdir}" \
     install
@@ -230,13 +262,13 @@ package() {
     -p \
     "${pkgdir}/usr/share/doc/${_pkg}"
   cd \
-    "${srcdir}/${_pkg}/doc"
+    "${srcdir}/${_tarname}/doc"
   cp \
     -r \
     * \
     "${pkgdir}/usr/share/doc/${_pkg}/"
   cd \
-    "${srcdir}/${_pkg}"
+    "${srcdir}/${_tarname}"
   cp \
     "AUTHORS" \
     "COPYING" \
