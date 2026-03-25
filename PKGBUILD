@@ -46,6 +46,7 @@ fi
 if [[ ! -v "_archive_format" ]]; then
   _archive_format="zip"
 fi
+_target="m68k-elf"
 _pkg="pce"
 pkgbase="${_pkg}"
 pkgname=(
@@ -53,7 +54,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=1
+pkgrel=2
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -84,7 +85,7 @@ depends=(
   'sdl2'
 )
 makedepends=(
-  'm68k-elf-gcc'
+  "${_target}-gcc"
 )
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
@@ -237,6 +238,49 @@ build() {
 }
 
 package() {
+  local \
+    _rom_files=()
+  _rom_files+=(
+    "atarist/tos-1.00-uk.rom"
+    "atarist/tos-1.00-us.rom"
+    "atarist/tos-1.02-uk.rom"
+    "atarist/tos-1.02-us.rom"
+    "atarist/tos-1.04-uk.rom"
+    "atarist/tos-1.04-us.rom"
+    "atarist/tos-2.06-uk.rom"
+    "atarist/tos-2.06-us.rom"
+    "ibmpc/award-2.05.rom"
+    "ibmpc/ibm-pc-1981-04-24.rom"
+    "ibmpc/ibm-pc-1981-10-19.rom"
+    "ibmpc/ibm-pc-1982-10-27.rom"
+    "ibmpc/ibm-xt-1982-11-08.rom"
+    "ibmpc/ibm-xt-1986-05-09.rom"
+    "ibmpc/ibm-basic-1.00.rom"
+    "ibmpc/ibm-basic-1.10.rom"
+    "ibmpc/kyocera.rom"
+    "ibmpc/olivetti-m24-1.21.rom"
+    "ibmpc/olivetti-m24-1.43.rom"
+    "ibmpc/phoenix-2.51.rom"
+    "ibmpc/ibm-xebec-hdc-1985.rom"
+    "ibmpc/dtc-hdc-1988.rom"
+    "video/genoa-ega-2.41.rom"
+    "video/ibm-ega.rom"
+    "video/et4000.rom"
+    "video/ibm-vga.rom"
+    "video/mx86200.rom"
+    "video/tvga-d3.0.rom"
+    "video/tvga-d3.0-pce.rom"
+    "video/tvga-c4.3.rom"
+    "mac/mac-128k.rom"
+    "mac/mac-512k.rom"
+    "mac/mac-plus-3.rom"
+    "mac/mac-se.rom"
+    "mac/mac-classic.rom"
+    "rc759/rc759-1-2.1.rom"
+    "rc759/rc759-1-5.1.rom"
+    "rc759/rc759-2-4.0.rom"
+    "rc759/rc759-2-5.1.rom"
+  )
   cd \
     "${srcdir}/${_tarname}"
   make \
@@ -277,46 +321,7 @@ package() {
     "TODO" \
     "${pkgdir}/usr/share/doc/${_pkg}/"
   # install roms
-  for rom \
-    in "atarist/tos-1.00-uk.rom" \
-       "atarist/tos-1.00-us.rom" \
-       "atarist/tos-1.02-uk.rom" \
-       "atarist/tos-1.02-us.rom" \
-       "atarist/tos-1.04-uk.rom" \
-       "atarist/tos-1.04-us.rom" \
-       "atarist/tos-2.06-uk.rom" \
-       "atarist/tos-2.06-us.rom" \
-       "ibmpc/award-2.05.rom" \
-       "ibmpc/ibm-pc-1981-04-24.rom" \
-       "ibmpc/ibm-pc-1981-10-19.rom" \
-       "ibmpc/ibm-pc-1982-10-27.rom" \
-       "ibmpc/ibm-xt-1982-11-08.rom" \
-       "ibmpc/ibm-xt-1986-05-09.rom" \
-       "ibmpc/ibm-basic-1.00.rom" \
-       "ibmpc/ibm-basic-1.10.rom" \
-       "ibmpc/kyocera.rom" \
-       "ibmpc/olivetti-m24-1.21.rom" \
-       "ibmpc/olivetti-m24-1.43.rom" \
-       "ibmpc/phoenix-2.51.rom" \
-       "ibmpc/ibm-xebec-hdc-1985.rom" \
-       "ibmpc/dtc-hdc-1988.rom" \
-       "video/genoa-ega-2.41.rom" \
-       "video/ibm-ega.rom" \
-       "video/et4000.rom" \
-       "video/ibm-vga.rom" \
-       "video/mx86200.rom" \
-       "video/tvga-d3.0.rom" \
-       "video/tvga-d3.0-pce.rom" \
-       "video/tvga-c4.3.rom" \
-       "mac/mac-128k.rom" \
-       "mac/mac-512k.rom" \
-       "mac/mac-plus-3.rom" \
-       "mac/mac-se.rom" \
-       "mac/mac-classic.rom" \
-       "rc759/rc759-1-2.1.rom" \
-       "rc759/rc759-1-5.1.rom" \
-       "rc759/rc759-2-4.0.rom" \
-       "rc759/rc759-2-5.1.rom"; do
+  for rom in "${_rom_files[@]}"; do
     mkdir \
       -p \
       "${pkgdir}/usr/share/${_pkg}/`dirname ${rom}`"
