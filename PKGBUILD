@@ -237,9 +237,21 @@ build() {
   make
 }
 
-package() {
+package_pce() {
   local \
+    _make_opts=() \
+    _doc_files=() \
     _rom_files=()
+  _make_opts+=(
+    DESTDIR="${pkgdir}"
+  )
+  _doc_files+=(
+    "AUTHORS"
+    "COPYING"
+    "NEWS"
+    "README"
+    "TODO"
+  )
   _rom_files+=(
     "atarist/tos-1.00-uk.rom"
     "atarist/tos-1.00-us.rom"
@@ -284,7 +296,7 @@ package() {
   cd \
     "${srcdir}/${_tarname}"
   make \
-    DESTDIR="${pkgdir}" \
+    "${_make_opts[@]}" \
     install
   # fix location of example configs
   mkdir \
@@ -314,11 +326,7 @@ package() {
   cd \
     "${srcdir}/${_tarname}"
   cp \
-    "AUTHORS" \
-    "COPYING" \
-    "NEWS" \
-    "README" \
-    "TODO" \
+    "${_doc_files[@]}" \
     "${pkgdir}/usr/share/doc/${_pkg}/"
   # install roms
   for rom in "${_rom_files[@]}"; do
