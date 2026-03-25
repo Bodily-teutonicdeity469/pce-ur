@@ -54,7 +54,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=6
+pkgrel=7
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -243,17 +243,17 @@ package_pce() {
     _make_opts=() \
     _doc_files=() \
     _rom_files=()
-  _make_opts+=(
+  _make_opts=(
     DESTDIR="${pkgdir}"
   )
-  _doc_files+=(
+  _doc_files=(
     "AUTHORS"
     "COPYING"
     "NEWS"
     "README"
     "TODO"
   )
-  _rom_files+=(
+  _rom_files=(
     "atarist/tos-1.00-uk.rom"
     "atarist/tos-1.00-us.rom"
     "atarist/tos-1.02-uk.rom"
@@ -305,7 +305,8 @@ package_pce() {
     "${pkgdir}/usr/share/${_pkg}"
   mv \
     "${pkgdir}/usr/etc/${_pkg}" \
-    "${pkgdir}/usr/share/${_pkg}/config"
+    "${pkgdir}/usr/share/${_pkg}/config" || \
+  true
   rm \
     -rf \
     "${pkgdir}/usr/etc"
@@ -322,7 +323,8 @@ package_pce() {
   cp \
     -r \
     * \
-    "${pkgdir}/usr/share/doc/${_pkg}/"
+    "${pkgdir}/usr/share/doc/${_pkg}/" || \
+    true
   cd \
     "${srcdir}/${_tarname}"
   cp \
