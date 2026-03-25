@@ -54,7 +54,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=5
+pkgrel=6
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -239,6 +239,7 @@ build() {
 
 package_pce() {
   local \
+    _rom \
     _make_opts=() \
     _doc_files=() \
     _rom_files=()
@@ -311,8 +312,7 @@ package_pce() {
   cd \
     "${pkgdir}/usr/share/${_pkg}/config"
   patch \
-    -p0 < \
-    "${srcdir}/${_pkg}-ibmpc.patch"
+    -p0 < "${srcdir}/${_pkg}-ibmpc.patch"
   # install doc files
   mkdir \
     -p \
@@ -327,14 +327,19 @@ package_pce() {
     "${srcdir}/${_tarname}"
   cp \
     "${_doc_files[@]}" \
-    "${pkgdir}/usr/share/doc/${_pkg}/"
+    "${pkgdir}/usr/share/doc/${_pkg}/" || \
+  true
   # install roms
-  for rom in "${_rom_files[@]}"; do
+  for _rom in "${_rom_files[@]}"; do
     mkdir \
       -p \
-      "${pkgdir}/usr/share/${_pkg}/`dirname ${rom}`"
+      "${pkgdir}/usr/share/${_pkg}/$(
+        dirname\
+          "${_rom}")"
     cp \
-      "${srcdir}/`basename ${rom}`" \
-      "${pkgdir}/usr/share/${_pkg}/${rom}"
+      "${srcdir}/$(
+        basename \
+          "${_rom}")" \
+      "${pkgdir}/usr/share/${_pkg}/${_rom}"
   done
 }
