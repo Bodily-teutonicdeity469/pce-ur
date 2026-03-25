@@ -262,8 +262,10 @@ package_pce() {
     "${pkgdir}/usr/etc"
   cd \
     "${pkgdir}/usr/share/${_pkg}/config"
-  patch \
-    -p0 < "${srcdir}/${_pkg}-ibmpc.patch"
+  if [[ "${_git}" == "true" ]]; then
+    patch \
+      -p0 < "${srcdir}/${_pkg}-ibmpc.patch"
+  fi
   # install doc files
   mkdir \
     -p \
