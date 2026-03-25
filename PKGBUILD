@@ -54,7 +54,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=9
+pkgrel=10
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -238,8 +238,6 @@ build() {
 }
 
 package_pce() {
-  local \
-    _rom
   ls \
     -lsh
   cd \

@@ -867,14 +867,14 @@ jobs:
             ${{ secrets.GITHUB_TOKEN }}
         run: |
           _evmfs="false" \
+          recipe-get \
             -v \
-            recipe-get \
-              -o \
-                "array" \
-              -d \
-                " " \
-              "PKGBUILD" \
-              "makedepends"
+            -o \
+              "array" \
+            -d \
+              " " \
+            "PKGBUILD" \
+            "makedepends"
           _evmfs="false" \
             recipe-get \
               -o \
