@@ -46,6 +46,15 @@ fi
 if [[ ! -v "_archive_format" ]]; then
   _archive_format="zip"
 fi
+if [[ ! -v "_sdl" ]]; then
+  _sdl="false"
+fi
+if [[ ! -v "_sdl2" ]]; then
+  _sdl2="true"
+fi
+if [[ ! -v "_x11" ]]; then
+  _x11="true"
+fi
 _target="m68k-elf"
 _pkg="pce"
 pkgbase="${_pkg}"
@@ -54,7 +63,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=12
+pkgrel=13
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -76,22 +85,42 @@ license=(
   'GPLv2'
 )
 depends=(
-  'libx11'
-  'libxau'
-  'libxcb'
-  'libxdmcp'
   'ncurses'
   'readline'
-  'sdl2'
 )
 makedepends=(
-  "libx11"
-  'libxau'
-  'libxcb'
-  'libxdmcp'
   "${_target}-gcc"
-  "sdl2"
 )
+if [[ "${_x11}" == "true" ]]; then
+  _x11_depends=(
+    'libx11'
+    'libxau'
+    'libxcb'
+    'libxdmcp'
+  )
+  depends+=(
+    "${_x11_depends[@]}"
+  )
+  makedepends+=(
+    "${_x11_depends[@]}"
+  )
+fi
+if [[ "${_sdl}" == "true" ]]; then
+  depends+=(
+    "sdl12-compat"
+  )
+  makedepends+=(
+    "sdl12-compat"
+  )
+fi
+if [[ "${_sdl2}" == "true" ]]; then
+  depends+=(
+    'sdl2'
+  )
+  makedepends+=(
+    'sdl2'
+  )
+fi
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
     "git"
@@ -225,10 +254,19 @@ build() {
     _configure_opts=()
   _configure_opts+=(
     --prefix="/usr"
-    --with-x
     --enable-ibmpc-rom
     --enable-macplus-rom
   )
+  if [[ "${_x11}" == "true" ]]; then
+    _configure_opts+=(
+      --with-x
+    )
+  fi
+  if [[ "${_sdl1}" == "true" ]]; then
+    _configure_opts+=(
+      --with-sdl
+    )
+  fi
   cd \
     "${srcdir}/${_tarname}"
   ./configure \
