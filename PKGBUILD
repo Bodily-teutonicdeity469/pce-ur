@@ -54,7 +54,7 @@ pkgname=(
 )
 _commit="70b5e3f770be3c02f07dd3963bd82dfa22d94b37"
 pkgver="ur.0.2.2.745.g70b5e3f7"
-pkgrel=11
+pkgrel=12
 _pkgdesc=(
   "PCE is a collection of"
   "microcomputer emulators"
@@ -85,7 +85,12 @@ depends=(
   'sdl2'
 )
 makedepends=(
+  "libx11"
+  'libxau'
+  'libxcb'
+  'libxdmcp'
   "${_target}-gcc"
+  "sdl2"
 )
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
